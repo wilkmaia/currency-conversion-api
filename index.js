@@ -4,6 +4,7 @@ var request = require( "request" );
 var app = express();
 var base = "BRL";
 var options = [ "USD", "CAD", "GBP", "EUR", "ARS", "MYR", "JPY" ];
+var PORT = 9980;
 
 var conv = [];
 
@@ -13,7 +14,6 @@ app.get( '/getEverything', function( req, res ){
 	options.forEach( function( o ){
 		request( "https://www.google.com/finance/converter?a=1&from="+ o +"&to=" + base,
 		function( er, response, body ){ // response function
-			//res.push( parseFloat( res.body.split( "<span class=bld>" )[1] ) );
 			responseGetEverything( parseFloat( response.body.split( "<span class=bld>" )[1] ), res );
 		});
 	});
@@ -44,7 +44,7 @@ app.get( '/getCustomConversion', function( req, res ){
 	});
 });
 
-var server = app.listen( 9980, function() {
+var server = app.listen( PORT, function() {
 	var host = server.address().address;
 	var port = server.address().port;
 	
