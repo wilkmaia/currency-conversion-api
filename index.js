@@ -6,7 +6,7 @@ var base = "BRL";
 var options = [ "USD", "CAD", "GBP", "EUR", "ARS", "MYR", "JPY" ];
 var PORT = 9980;
 
-var conv = [];
+var conv = {};
 
 app.get( '/getEverything', function( req, res ){
 	o = options[0];
@@ -14,22 +14,17 @@ app.get( '/getEverything', function( req, res ){
 	options.forEach( function( o ){
 		request( "https://www.google.com/finance/converter?a=1&from="+ o +"&to=" + base,
 		function( er, response, body ){ // response function
-			responseGetEverything( parseFloat( response.body.split( "<span class=bld>" )[1] ), res );
+			responseGetEverything( parseFloat( response.body.split( "<span class=bld>" )[1] ), res, o );
 		});
 	});
 });
 
-function responseGetEverything( val, res )
+function responseGetEverything( val, res, o )
 {
-	conv.push( val );
-	if( conv.length == options.length ) // All requests done
+	conv[o] = val;
+	if( Object.keys( conv ).length == options.length ) // All requests done
 	{
-		var data = {};
-		options.forEach( function( o, idx, ar ){
-			data[o] = conv[idx];
-			if( idx == ar.length - 1 )
-				res.end( JSON.stringify( data ) );
-		});
+		res.end( JSON.stringify( conv ) );
 	}
 }
 
